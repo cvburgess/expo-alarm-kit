@@ -77,6 +77,13 @@ export interface ScheduleAlarmOptions {
   snoozeButtonColor?: string;
   /** Hex color for the overall alarm tint (default: '#0000FF') */
   tintColor?: string;
+  /**
+   * Hex color that reads on top of `tintColor`. Not drawn by AlarmKit
+   * itself — it travels in the alarm's metadata for a widget extension to
+   * use when it draws its own content over the tint. Omit it and a widget
+   * has only the tint to work from.
+   */
+  contentColor?: string;
   /** Snooze duration in seconds (default: 540 = 9 minutes) */
   snoozeDuration?: number;
 }
@@ -142,6 +149,13 @@ export interface ScheduleRepeatingAlarmOptions {
   snoozeButtonColor?: string;
   /** Hex color for the overall alarm tint (default: '#0000FF') */
   tintColor?: string;
+  /**
+   * Hex color that reads on top of `tintColor`. Not drawn by AlarmKit
+   * itself — it travels in the alarm's metadata for a widget extension to
+   * use when it draws its own content over the tint. Omit it and a widget
+   * has only the tint to work from.
+   */
+  contentColor?: string;
   /** Snooze duration in seconds (default: 540 = 9 minutes) */
   snoozeDuration?: number;
 }
@@ -166,6 +180,13 @@ export interface ScheduleTimerOptions {
   soundName?: string;
   /** Hex color for the overall alarm tint (default: '#0000FF') */
   tintColor?: string;
+  /**
+   * Hex color that reads on top of `tintColor`. Not drawn by AlarmKit
+   * itself — it travels in the alarm's metadata for a widget extension to
+   * use when it draws its own content over the tint. Omit it and a widget
+   * has only the tint to work from.
+   */
+  contentColor?: string;
   /**
    * Label for the pause button. Omit it to schedule a countdown with no pause
    * button at all — the right choice for an app that owns the timer's state

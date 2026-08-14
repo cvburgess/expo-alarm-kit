@@ -22,6 +22,7 @@ export interface ScheduleAlarmOptions {
   stopButtonColor?: string | null;
   snoozeButtonColor?: string | null;
   tintColor?: string | null;
+  contentColor?: string | null;
   snoozeDuration?: number | null;
 }
 
@@ -42,6 +43,7 @@ export interface ScheduleRepeatingAlarmOptions {
   stopButtonColor?: string | null;
   snoozeButtonColor?: string | null;
   tintColor?: string | null;
+  contentColor?: string | null;
   snoozeDuration?: number | null;
 }
 
@@ -51,6 +53,7 @@ export interface ScheduleTimerOptions {
   title: string;
   soundName?: string | null;
   tintColor?: string | null;
+  contentColor?: string | null;
   pauseButtonLabel?: string | null;
   pauseButtonColor?: string | null;
   resumeButtonLabel?: string | null;

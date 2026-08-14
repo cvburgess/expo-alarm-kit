@@ -63,6 +63,37 @@ public class ExpoAlarmKitStorage {
     }
 }
 
+// MARK: - Alarm Metadata
+//
+// The metadata every alarm is scheduled with, and the only channel besides
+// `tintColor` that reaches a widget: `AlarmAttributes` carries one colour and
+// this struct, and nothing else.
+//
+// **The name `Meta` is load-bearing.** A widget extension declares its own
+// mirror of this type to receive `AlarmAttributes<Meta>`, and ActivityKit
+// matches the two on the *unqualified* type name — `String(describing:)` erases
+// module and enclosing context alike. The mirror lives in a different module and
+// still matches, but only while both are spelled `Meta`. Renaming this breaks
+// every consumer's lock screen with no compile error on either side.
+//
+// **Every property must stay Optional.** Swift synthesises `decodeIfPresent` for
+// an Optional stored property, which is what lets a widget decode metadata
+// written by an older build that never had the field. A non-Optional property
+// with a default value does *not* get that treatment — synthesised `Decodable`
+// ignores the default and throws on missing data, and the failure surfaces as a
+// scheduled alarm whose Live Activity silently renders nothing.
+@available(iOS 26.0, *)
+nonisolated struct Meta: AlarmMetadata {
+    /// Hex colour that reads on top of `tintColor`, for widgets that draw their
+    /// own content over the alarm's tint. `nil` when the scheduling app didn't
+    /// supply one, in which case the widget falls back to deriving it.
+    let contentColor: String?
+
+    init(contentColor: String? = nil) {
+        self.contentColor = contentColor
+    }
+}
+
 // MARK: - Record Structs for Expo Module
 @available(iOS 26.0, *)
 struct ScheduleAlarmOptions: Record {
@@ -80,6 +111,7 @@ struct ScheduleAlarmOptions: Record {
     @Field var stopButtonColor: String?
     @Field var snoozeButtonColor: String?
     @Field var tintColor: String?
+    @Field var contentColor: String?
     @Field var snoozeDuration: Int?
 }
 
@@ -101,6 +133,7 @@ struct ScheduleRepeatingAlarmOptions: Record {
     @Field var stopButtonColor: String?
     @Field var snoozeButtonColor: String?
     @Field var tintColor: String?
+    @Field var contentColor: String?
     @Field var snoozeDuration: Int?
 }
 
@@ -111,6 +144,7 @@ struct ScheduleTimerOptions: Record {
     @Field var title: String
     @Field var soundName: String?
     @Field var tintColor: String?
+    @Field var contentColor: String?
     @Field var pauseButtonLabel: String?
     @Field var pauseButtonColor: String?
     @Field var resumeButtonLabel: String?
@@ -329,8 +363,6 @@ public class ExpoAlarmKitModule: Module {
         
         // MARK: - Schedule One-Time Alarm
         AsyncFunction("scheduleAlarm") { (options: ScheduleAlarmOptions) async throws -> Bool in
-            struct Meta: AlarmMetadata {}
-            
             let date = Date(timeIntervalSince1970: options.epochSeconds)
             guard let uuid = UUID(uuidString: options.id) else {
                 print("[ExpoAlarmKit] Invalid UUID string: \(options.id)")
@@ -378,7 +410,7 @@ public class ExpoAlarmKitModule: Module {
             let alarmTintColor = options.tintColor != nil ? colorFromHex(options.tintColor!) : Color.blue
             let attributes = AlarmAttributes<Meta>(
                 presentation: presentation,
-                metadata: Meta(),
+                metadata: Meta(contentColor: options.contentColor),
                 tintColor: alarmTintColor
             )
             
@@ -430,8 +462,6 @@ public class ExpoAlarmKitModule: Module {
         
         // MARK: - Schedule Repeating Alarm
         AsyncFunction("scheduleRepeatingAlarm") { ( options: ScheduleRepeatingAlarmOptions) async throws -> Bool in
-            struct Meta: AlarmMetadata {}
-            
             guard let uuid = UUID(uuidString: options.id) else {
                 print("[ExpoAlarmKit] Invalid UUID string: \(options.id)")
                 return false
@@ -498,7 +528,7 @@ public class ExpoAlarmKitModule: Module {
             let alarmTintColor = options.tintColor != nil ? colorFromHex(options.tintColor!) : Color.blue
             let attributes = AlarmAttributes<Meta>(
                 presentation: presentation,
-                metadata: Meta(),
+                metadata: Meta(contentColor: options.contentColor),
                 tintColor: alarmTintColor
             )
             
@@ -550,8 +580,6 @@ public class ExpoAlarmKitModule: Module {
         
         // MARK: - Schedule Timer Alarm
         AsyncFunction("scheduleTimerAlarm") { (options: ScheduleTimerOptions) async throws -> Bool in
-            struct Meta: AlarmMetadata {}
-            
             guard let uuid = UUID(uuidString: options.id) else {
                 print("[ExpoAlarmKit] Invalid UUID string: \(options.id)")
                 return false
@@ -603,7 +631,7 @@ public class ExpoAlarmKitModule: Module {
             let alarmTintColor = options.tintColor != nil ? colorFromHex(options.tintColor!) : Color.blue
             let attributes = AlarmAttributes<Meta>(
                 presentation: presentation,
-                metadata: Meta(),
+                metadata: Meta(contentColor: options.contentColor),
                 tintColor: alarmTintColor
             )
             

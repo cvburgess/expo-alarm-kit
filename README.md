@@ -203,6 +203,36 @@ When `launchAppOnDismiss: true` or (`doSnoozeIntent: true` + `launchAppOnSnooze:
 3. The module writes a `LaunchPayload` to the shared storage.
 4. When your React Native JS bundle loads, calling `getLaunchPayload()` retrieves and clears this data, allowing you to react to the event.
 
+### Widget Extensions & Alarm Metadata
+
+If you ship your own widget extension to draw the lock-screen card, it receives
+`AlarmAttributes<Meta>`. Two rules govern the `Meta` type, and neither produces a
+compile error when broken — the symptom is a lock screen that renders nothing:
+
+1. **The type must be named exactly `Meta`.** ActivityKit matches your widget's
+   type against the scheduled activity's on the *unqualified* name;
+   `String(describing:)` erases the module and any enclosing context. Your mirror
+   lives in a different module than this one and still matches, but only while
+   both are spelled `Meta`.
+2. **Every property must be `Optional`.** Swift synthesises `decodeIfPresent` for
+   Optional stored properties, which is what lets your widget decode metadata
+   written by a build that predates the field. A non-Optional property with a
+   default value does *not* get that treatment — synthesised `Decodable` ignores
+   the default and throws on missing data.
+
+The minimal mirror, which reads `contentColor` and tolerates its absence:
+
+```swift
+@available(iOS 26.0, *)
+nonisolated struct Meta: AlarmMetadata {
+    let contentColor: String?
+}
+```
+
+A widget whose `Meta` is still empty (`struct Meta: AlarmMetadata {}`) keeps
+working against this version — keyed decoders ignore unknown keys — so you can
+adopt `contentColor` whenever you're ready rather than in lockstep.
+
 ---
 
 ## API Reference
@@ -248,6 +278,7 @@ Schedules a non-repeating alarm.
 | `stopButtonColor` | `string` | No | Hex color string. |
 | `snoozeButtonColor` | `string` | No | Hex color string. |
 | `tintColor` | `string` | No | Overall UI tint color. |
+| `contentColor` | `string` | No | Hex color that reads on top of `tintColor`, for a widget extension. |
 | `snoozeDuration` | `number` | No | Duration in seconds (default: 540). |
 
 **Note: Provide either `epochSeconds` OR `date`, not both.*
@@ -285,6 +316,7 @@ Schedules a timer-based alarm that fires after a specified duration.
 | `title` | `string` | **Yes** | Main text displayed on lock screen. |
 | `soundName` | `string` | No | Filename of sound in app bundle. |
 | `tintColor` | `string` | No | Hex color string (default: '#0000FF'). |
+| `contentColor` | `string` | No | Hex color that reads on top of `tintColor`, for a widget extension. |
 | `pauseButtonLabel` | `string` | No | Text for pause button. Omit for a countdown with no pause button. |
 | `pauseButtonColor` | `string` | No | Hex color string for pause button. |
 | `resumeButtonLabel` | `string` | No | Text for resume button. Omit for no paused presentation. |
