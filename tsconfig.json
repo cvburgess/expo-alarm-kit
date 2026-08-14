@@ -2,7 +2,10 @@
 {
   "extends": "expo-module-scripts/tsconfig.base",
   "compilerOptions": {
-    "outDir": "./build"
+    "outDir": "./build",
+    // Explicit since expo-module-scripts 56: without it tsc infers the common
+    // source directory and emits to build/src/, which `main` does not point at.
+    "rootDir": "./src"
   },
   "include": ["./src"],
   "exclude": ["**/__mocks__/*", "**/__tests__/*", "**/__rsc_tests__/*"]

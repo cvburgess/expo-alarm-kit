@@ -22,6 +22,7 @@ export interface ScheduleAlarmOptions {
   stopButtonColor?: string | null;
   snoozeButtonColor?: string | null;
   tintColor?: string | null;
+  contentColor?: string | null;
   snoozeDuration?: number | null;
 }
 
@@ -42,7 +43,23 @@ export interface ScheduleRepeatingAlarmOptions {
   stopButtonColor?: string | null;
   snoozeButtonColor?: string | null;
   tintColor?: string | null;
+  contentColor?: string | null;
   snoozeDuration?: number | null;
+}
+
+export interface ScheduleTimerOptions {
+  id: string;
+  duration: number;
+  title: string;
+  soundName?: string | null;
+  tintColor?: string | null;
+  contentColor?: string | null;
+  pauseButtonLabel?: string | null;
+  pauseButtonColor?: string | null;
+  resumeButtonLabel?: string | null;
+  resumeButtonColor?: string | null;
+  launchAppOnDismiss?: boolean;
+  dismissPayload?: string | null;
 }
 
 class ExpoAlarmKitModule extends NativeModule {
@@ -72,6 +89,11 @@ class ExpoAlarmKitModule extends NativeModule {
 
   async scheduleRepeatingAlarm(options: ScheduleRepeatingAlarmOptions): Promise<boolean> {
     console.warn('ExpoAlarmKit.scheduleRepeatingAlarm is not supported on web');
+    return false;
+  }
+
+  async scheduleTimerAlarm(options: ScheduleTimerOptions): Promise<boolean> {
+    console.warn('ExpoAlarmKit.scheduleTimerAlarm is not supported on web');
     return false;
   }
 

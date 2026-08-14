@@ -1,0 +1,33 @@
+# `build/` is committed and `main` points straight at it: there is no `prepare`
+# script, so a consumer installing this by git ref gets these files verbatim and
+# never compiles anything. A stale `build/` is therefore invisible here and
+# breaks at the consumer's bundle step instead.
+#
+# Rebuild and fail if the result differs from what is checked in.
+name: build/ is current
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-is-current:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Fail if build/ differs from the committed output
+        run: |
+          if ! git diff --exit-code -- build/; then
+            echo "::error::build/ is stale. Run 'npm run build' and commit the result."
+            exit 1
+          fi

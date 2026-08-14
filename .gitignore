@@ -9,6 +9,10 @@ jsconfig.json
 # Xcode
 #
 build/
+# ...except our own compiled output, which is committed. `main` points at
+# build/index.js and there is no `prepare` script, so a consumer installing
+# from a git ref gets these files or gets nothing.
+!/build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3

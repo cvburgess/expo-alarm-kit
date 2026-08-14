@@ -2,9 +2,16 @@
 
 An Expo module for iOS AlarmKit integration. Schedule native iOS alarms with optional app launch on dismissal or snooze intents.
 
+> **This is a fork of [nickdeupree/expo-alarm-kit](https://github.com/nickdeupree/expo-alarm-kit)**, maintained for the apps that depend on it. It adds two things:
+>
+> * **Optional pause/resume buttons** on timer alarms, so an app that owns its timer's state can schedule a watch-only countdown. Proposed upstream as [#6](https://github.com/nickdeupree/expo-alarm-kit/pull/6).
+> * **`contentColor` in the alarm's metadata**, so a widget extension knows what colour reads on top of `tintColor` instead of guessing from luminance.
+>
+> It is **not published to npm**. Install it by git ref (see below). Because it tracks only the Expo SDK its consumers run, it is a narrower target than upstream — if you need broader SDK support, use upstream.
+
 > **⚠️ Requirements:**
 > * **iOS Deployment Target:** 26.0+
-> * **Expo SDK:** 50+
+> * **Expo SDK:** 57+
 > * **Framework:** Apple AlarmKit
 
 ## Features
@@ -20,12 +27,20 @@ An Expo module for iOS AlarmKit integration. Schedule native iOS alarms with opt
 
 ## Installation
 
-```bash
-npm install expo-alarm-kit
-# or
-yarn add expo-alarm-kit
+This fork is installed by git ref, pinned to a tag or a commit SHA:
 
+```bash
+npm install "git+https://github.com/cvburgess/expo-alarm-kit.git#v0.2.0"
 ```
+
+The package name stays `expo-alarm-kit`, so imports and Expo autolinking are unchanged.
+
+Prefer the `git+https://` form over npm's `github:` shorthand — npm normalizes the
+shorthand to `git+ssh://` in the lockfile, which fails on CI runners and EAS build
+workers that have no SSH agent.
+
+There is no `prepare` script and no build step at install time: `build/` is committed,
+so installing is a clone. See [Contributing](#contributing) if you change the source.
 
 Since this module utilizes native iOS frameworks, you must prebuild your project:
 
@@ -370,3 +385,31 @@ interface LaunchPayload {
 ## Known Issues
 
 * **Custom Labels/Colors:** The `stopButtonLabel`, `stopButtonColor` properties are not correctly modifying the stop button/slider.
+
+---
+
+## Contributing
+
+```bash
+npm ci
+npm run build   # tsc -> build/
+```
+
+**`build/` is committed, and you must commit it with your source change.** There is
+no `prepare` script, so nothing compiles at install time — a consumer installing by
+git ref gets whatever is in `build/` at that ref. Source without a matching build is
+a change that silently does not ship. CI enforces this (`.github/workflows/build-is-current.yml`).
+
+Two other things that bite:
+
+* **`ios/ExpoAlarmKit.podspec` enumerates `s.source_files`.** A new `.swift` file is
+  not compiled until it is listed there, and the failure looks like a missing type
+  rather than a missing file.
+* **The metadata struct must stay named `Meta` with only Optional properties.** See
+  [Widget Extensions & Alarm Metadata](#widget-extensions--alarm-metadata) — breaking
+  either rule produces no compile error, just a lock screen that renders nothing.
+
+This fork tracks only the Expo SDK its consumers run. Changes that are generally
+useful rather than consumer-specific should go upstream to
+[nickdeupree/expo-alarm-kit](https://github.com/nickdeupree/expo-alarm-kit) first,
+branched off *upstream* `main` so the diff stays clean.

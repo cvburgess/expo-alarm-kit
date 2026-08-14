@@ -1,9 +1,10 @@
-import ExpoAlarmKitModule, {
+import ExpoAlarmKitModule from './ExpoAlarmKitModule';
+import type {
   AuthorizationStatus,
   LaunchPayload,
 } from './ExpoAlarmKitModule';
 
-export { AuthorizationStatus, LaunchPayload };
+export type { AuthorizationStatus, LaunchPayload };
 
 /**
  * Configure the module with an App Group identifier.

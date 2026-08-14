@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
     :ios => '26.1',
   }
   s.swift_version  = '5.9'
-  s.source         = { git: 'https://github.com/nickdeupree/expo-alarm-kit' }
+  s.source         = { git: 'https://github.com/cvburgess/expo-alarm-kit' }
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
@@ -26,6 +26,7 @@ Pod::Spec.new do |s|
     'HEADER_SEARCH_PATHS' => '$(inherited) "$(PODS_ROOT)/Headers/Public/ExpoModulesCore"',
   }
 
-  # Only include the module implementation files
-  s.source_files = "ExpoAlarmKitModule.swift", "ExpoAlarmKitModule.m", "ExpoAlarmKitView.swift"
+  # Enumerated rather than globbed, so a new .swift file here is invisible to the
+  # build until it is added to this list.
+  s.source_files = "ExpoAlarmKitModule.swift"
 end

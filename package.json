@@ -1,6 +1,6 @@
 {
   "name": "expo-alarm-kit",
-  "version": "0.1.11",
+  "version": "0.2.0",
   "description": "An Expo module for iOS AlarmKit integration - schedule native alarms with optional app launch on dismissal",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -9,7 +9,6 @@
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "test": "expo-module test",
-    "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
@@ -26,19 +25,19 @@
     "alarm-kit",
     "native-alarm"
   ],
-  "repository": "https://github.com/nickdeupree/expo-alarm-kit",
+  "repository": "https://github.com/cvburgess/expo-alarm-kit",
   "bugs": {
-    "url": "https://github.com/nickdeupree/expo-alarm-kit/issues"
+    "url": "https://github.com/cvburgess/expo-alarm-kit/issues"
   },
   "author": "Nick Deupree <nicholasdeupree@gmail.com> (https://github.com/nickdeupree)",
   "license": "MIT",
-  "homepage": "https://github.com/nickdeupree/expo-alarm-kit#readme",
+  "homepage": "https://github.com/cvburgess/expo-alarm-kit#readme",
   "dependencies": {},
   "devDependencies": {
-    "@types/react": "~19.1.0",
-    "expo-module-scripts": "^5.0.8",
-    "expo": "^54.0.27",
-    "react-native": "0.81.5"
+    "@types/react": "~19.2.2",
+    "expo-module-scripts": "^56.0.3",
+    "expo": "~57.0.9",
+    "react-native": "0.86.2"
   },
   "peerDependencies": {
     "expo": "*",
